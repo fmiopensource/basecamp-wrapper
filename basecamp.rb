@@ -389,6 +389,20 @@ class Basecamp
     end
   end
 
+  # To get the current logged in user user
+  # Basecamp::People.me
+  # To get all by company:
+  # Basecamp::Person.find(:all, :params => {:company_id => company.id})
+  # To get all by project:
+  # Basecamp::Person.find(:all, :params => {:project_id => project.id})
+  class Person < Resource
+    parent_resources :company, :projects
+
+    def self.me
+      get(:me)
+    end
+  end
+
   class Record #:nodoc:
     attr_reader :type
 
@@ -477,23 +491,6 @@ class Basecamp
 
   def initialize
     @use_xml = false
-  end
-
-  # ==========================================================================
-  # PEOPLE
-  # ==========================================================================
-
-  # Return an array of the people in the given company. If the project-id is
-  # given, only people who have access to the given project will be returned.
-  def people(company_id, project_id=nil)
-    url = project_id ? "/projects/#{project_id}" : ""
-    url << "/contacts/people/#{company_id}"
-    records "person", url
-  end
-
-  # Return information about the person with the given id
-  def person(id)
-    record "/contacts/person/#{id}"
   end
 
   # ==========================================================================
